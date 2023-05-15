@@ -23,7 +23,7 @@ export const login = async (request: any, reply: any) => {
         role: ['admin'],
         expiresIn: '2h',
     });
-    return reply.status(200).send({ accessToken: `Bearer ${token}` });
+    return reply.status(200).send({ data: { accessToken: `Bearer ${token}` } });
 };
 
 export const register = (request: any, reply: any) => {
