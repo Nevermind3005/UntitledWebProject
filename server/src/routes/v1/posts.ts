@@ -2,7 +2,6 @@ import { FastifyInstance } from 'fastify';
 import { Server, IncomingMessage, ServerResponse } from 'http';
 import { postsGetHandler, postPostHandler } from '../../handlers/postsHandler';
 import {
-    PostGet,
     PostPostDto,
     PostsGetDto,
     PostsGetDtoType,

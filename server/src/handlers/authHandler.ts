@@ -1,7 +1,9 @@
 import bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 
 const saltRounds = 10;
 
+//TODO: Refactor login
 export const login = async (request: any, reply: any) => {
     const { username, password } = request.body;
     const dbUser = await request.server.mongo.db
@@ -20,10 +22,34 @@ export const login = async (request: any, reply: any) => {
 
     const token = await reply.jwtSign({
         username: dbUser.username,
-        role: ['admin'],
+        role: dbUser.role || 'user',
         expiresIn: '2h',
     });
-    return reply.status(200).send({ data: { accessToken: `Bearer ${token}` } });
+
+    const refreshToken = {
+        token: uuidv4(),
+        createdAt: new Date(),
+        // 7 days
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        revoked: null,
+    };
+
+    request.server.mongo.db
+        .collection('Users')
+        .updateOne(
+            { _id: dbUser._id },
+            { $push: { refreshTokens: refreshToken } }
+        );
+
+    return reply
+        .setCookie('refreshToken', refreshToken.token, {
+            path: '/api/v1/auth/',
+            httpOnly: true,
+            expires: refreshToken.expiresAt,
+            signed: true,
+        })
+        .status(200)
+        .send({ data: { accessToken: `Bearer ${token}` } });
 };
 
 export const register = (request: any, reply: any) => {
@@ -47,7 +73,110 @@ export const register = (request: any, reply: any) => {
             username: username,
             password: hash,
             email: email,
+            role: 'user',
         });
         return reply.status(201).send({ data: { status: 'Created' } });
     });
+};
+
+//TODO: Refactor logout
+export const logout = async (request: any, reply: any) => {
+    //Get cookie
+    const signedCookieRefreshToken = request.cookies.refreshToken;
+
+    //Check if cookie exists
+    if (!signedCookieRefreshToken) {
+        return reply.status(401).send({ data: { error: 'Unauthorized' } });
+    }
+
+    //Unsign cookie
+    const cookieRefreshToken = request.unsignCookie(
+        request.cookies.refreshToken
+    );
+
+    //Set token to revoked
+    let a = await request.server.mongo.db
+        .collection('Users')
+        .updateOne(
+            { 'refreshTokens.token': cookieRefreshToken.value },
+            { $set: { 'refreshTokens.$.revoked': new Date() } }
+        );
+
+    //Clear cookie
+    return reply
+        .clearCookie('refreshToken', { path: '/api/v1/auth/' })
+        .status(200)
+        .send();
+};
+
+//TODO: Refactor refresh
+export const refresh = async (request: any, reply: any) => {
+    //Get cookie
+    const signedCookieRefreshToken = request.cookies.refreshToken;
+
+    //Check if cookie exists
+    if (!signedCookieRefreshToken) {
+        return reply.status(401).send({ data: { error: 'Unauthorized' } });
+    }
+
+    //Unsign cookie
+    const cookieRefreshToken = request.unsignCookie(
+        request.cookies.refreshToken
+    );
+
+    //Get user from db
+    const dbUser = await request.server.mongo.db.collection('Users').findOne({
+        refreshTokens: {
+            $elemMatch: {
+                token: cookieRefreshToken.value,
+                revoked: null,
+                expiresAt: { $gt: new Date() },
+            },
+        },
+    });
+
+    if (!dbUser) {
+        return reply.status(401).send({ data: { error: 'Unauthorized' } });
+    }
+
+    //console.log(dbUser);
+
+    //Set token to revoked
+    let a = await request.server.mongo.db
+        .collection('Users')
+        .updateOne(
+            { 'refreshTokens.token': cookieRefreshToken.value },
+            { $set: { 'refreshTokens.$.revoked': new Date() } }
+        );
+
+    const token = await reply.jwtSign({
+        username: dbUser.username,
+        role: dbUser.role || 'user',
+        expiresIn: '2h',
+    });
+
+    const refreshToken = {
+        token: uuidv4(),
+        createdAt: new Date(),
+        // 7 days
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        revoked: null,
+    };
+
+    request.server.mongo.db
+        .collection('Users')
+        .updateOne(
+            { _id: dbUser._id },
+            { $push: { refreshTokens: refreshToken } }
+        );
+
+    return reply
+        .setCookie('refreshToken', refreshToken.token, {
+            path: '/api/v1/auth/',
+            httpOnly: true,
+            expires: refreshToken.expiresAt,
+            signed: true,
+        })
+        .status(200)
+        .send({ data: { accessToken: `Bearer ${token}` } });
 };

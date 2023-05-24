@@ -1,4 +1,4 @@
-import { login, register } from '../../handlers/authHandler';
+import { login, logout, refresh, register } from '../../handlers/authHandler';
 import { FastifyInstance } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import {
@@ -35,6 +35,10 @@ module.exports = function (
         },
         register
     );
+
+    fastify.post('/auth/logout', logout);
+
+    fastify.post('/auth/refresh', refresh);
 
     done();
 };

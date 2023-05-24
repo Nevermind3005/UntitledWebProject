@@ -11,5 +11,10 @@ export const UserRegisterDto = Type.Object({
     email: Type.String({ format: 'email' }),
 });
 
+export const UserDeactivateDto = Type.Object({
+    password: Type.String({ minLength: 8, maxLength: 64 }),
+    accessToken: Type.String(),
+});
+
 export type UserLoginDtoType = Static<typeof UserLoginDto>;
 export type UserRegisterDtoType = Static<typeof UserRegisterDto>;

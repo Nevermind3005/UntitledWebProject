@@ -1,4 +1,39 @@
+import { useState } from 'react';
+import { endpoints } from '../../api';
+
 const SignUp = () => {
+    const [signUpData, setSignUpData] = useState({
+        username: '',
+        password: '',
+        email: '',
+    });
+
+    const signUp = async () => {
+        let response;
+        try {
+            response = await fetch(endpoints.auth.register, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(signUpData),
+            });
+        } catch (error) {
+            console.log(error);
+        }
+        if (response?.ok) {
+            const data = await response.json();
+            console.log(data);
+        }
+    };
+
+    const handleSignUp = async (
+        e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    ) => {
+        e.preventDefault();
+        signUp();
+    };
+
     return (
         <>
             <div className='flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8'>
@@ -25,13 +60,13 @@ const SignUp = () => {
                                     className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                                     placeholder='Email'
                                     autoComplete='section-email'
-                                    // value={loginData.username}
-                                    // onChange={(e) =>
-                                    //     setLoginData({
-                                    //         ...loginData,
-                                    //         username: e.target.value,
-                                    //     })
-                                    // }
+                                    value={signUpData.email}
+                                    onChange={(e) =>
+                                        setSignUpData({
+                                            ...signUpData,
+                                            email: e.target.value,
+                                        })
+                                    }
                                     required={true}
                                 />
                             </div>
@@ -52,13 +87,13 @@ const SignUp = () => {
                                     className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                                     placeholder='Username'
                                     autoComplete='section-userName'
-                                    // value={loginData.username}
-                                    // onChange={(e) =>
-                                    //     setLoginData({
-                                    //         ...loginData,
-                                    //         username: e.target.value,
-                                    //     })
-                                    // }
+                                    value={signUpData.username}
+                                    onChange={(e) =>
+                                        setSignUpData({
+                                            ...signUpData,
+                                            username: e.target.value,
+                                        })
+                                    }
                                     required={true}
                                 />
                             </div>
@@ -78,13 +113,13 @@ const SignUp = () => {
                                     name='password'
                                     type='password'
                                     placeholder='Password'
-                                    // value={loginData.password}
-                                    // onChange={(e) =>
-                                    //     setLoginData({
-                                    //         ...loginData,
-                                    //         password: e.target.value,
-                                    //     })
-                                    // }
+                                    value={signUpData.password}
+                                    onChange={(e) =>
+                                        setSignUpData({
+                                            ...signUpData,
+                                            password: e.target.value,
+                                        })
+                                    }
                                     required={true}
                                     autoComplete='current-password'
                                     className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
@@ -94,6 +129,7 @@ const SignUp = () => {
                         <button
                             type='submit'
                             className='flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+                            onClick={(e) => handleSignUp(e)}
                         >
                             Sign up
                         </button>

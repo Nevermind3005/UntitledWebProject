@@ -16,12 +16,19 @@ server.register(require('@fastify/mongodb'), {
     url: mongodbUrl,
 });
 
+server.register(require('@fastify/cookie'), {
+    secret: process.env.COOKIE_SECRET,
+    hook: 'onRequest',
+    parseOptions: {},
+});
+
 server.register(require('@fastify/jwt'), {
     secret: process.env.JWT_SECRET,
 });
 
 server.register(require('./routes/v1/posts'), { prefix: '/api/v1' });
 server.register(require('./routes/v1/auth'), { prefix: '/api/v1' });
+server.register(require('./routes/v1/user'), { prefix: '/api/v1' });
 
 server.listen({ port: port }, (err, address) => {
     if (err) {
