@@ -1,12 +1,13 @@
 import bcrypt from 'bcrypt';
-import { v4 as uuidv4 } from 'uuid';
+import * as authService from '../services/authService';
+import { User } from '../types/user';
 
 const saltRounds = 10;
 
 //TODO: Refactor login
 export const login = async (request: any, reply: any) => {
     const { username, password } = request.body;
-    const dbUser = await request.server.mongo.db
+    const dbUser: User = await request.server.mongo.db
         .collection('Users')
         .findOne({ username: username });
 
@@ -20,19 +21,9 @@ export const login = async (request: any, reply: any) => {
         return reply.status(401).send({ data: { error: 'Unauthorized' } });
     }
 
-    const token = await reply.jwtSign({
-        username: dbUser.username,
-        role: dbUser.role || 'user',
-        expiresIn: '2h',
-    });
+    const token = await authService.generateJWT(reply, dbUser);
 
-    const refreshToken = {
-        token: uuidv4(),
-        createdAt: new Date(),
-        // 7 days
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        revoked: null,
-    };
+    const refreshToken = authService.generateRefreshToken(reply, dbUser);
 
     request.server.mongo.db
         .collection('Users')
@@ -149,19 +140,9 @@ export const refresh = async (request: any, reply: any) => {
             { $set: { 'refreshTokens.$.revoked': new Date() } }
         );
 
-    const token = await reply.jwtSign({
-        username: dbUser.username,
-        role: dbUser.role || 'user',
-        expiresIn: '2h',
-    });
+    const token = await authService.generateJWT(reply, dbUser);
 
-    const refreshToken = {
-        token: uuidv4(),
-        createdAt: new Date(),
-        // 7 days
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        revoked: null,
-    };
+    const refreshToken = authService.generateRefreshToken(reply, dbUser);
 
     request.server.mongo.db
         .collection('Users')

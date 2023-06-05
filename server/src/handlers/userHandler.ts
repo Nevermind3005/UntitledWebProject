@@ -20,3 +20,7 @@ export const userDeleteHandler = async (request: any, reply: any) => {
     }
     reply.status(200).send({ data: post });
 };
+
+export const userGetMeHandler = async (request: any, reply: any) => {
+    return request.user;
+};

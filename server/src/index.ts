@@ -26,6 +26,8 @@ server.register(require('@fastify/jwt'), {
     secret: process.env.JWT_SECRET,
 });
 
+server.register(require('./middleware/authMiddleware'));
+
 server.register(require('./routes/v1/posts'), { prefix: '/api/v1' });
 server.register(require('./routes/v1/auth'), { prefix: '/api/v1' });
 server.register(require('./routes/v1/user'), { prefix: '/api/v1' });
