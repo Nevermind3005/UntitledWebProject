@@ -8,7 +8,7 @@ export const generateJWT = async (reply: any, user: User) => {
             username: user.username,
             role: user.role || 'user',
         },
-        { expiresIn: '2m' }
+        { expiresIn: '2h' }
     );
     return token;
 };
@@ -22,4 +22,12 @@ export const generateRefreshToken = (reply: any, user: User): RefreshToken => {
         revoked: null,
     };
     return refreshToken;
+};
+
+export const authenticate = async (request: any, reply: any) => {
+    try {
+        await request.jwtVerify();
+    } catch (err) {
+        reply.send(err);
+    }
 };
