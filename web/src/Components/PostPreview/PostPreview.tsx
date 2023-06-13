@@ -14,7 +14,7 @@ const PostPreview: React.FC<IPostPreviewProps> = (post) => {
             <Link to={`post/${post._id}`}>
                 <li className='flex justify-between gap-x-6 py-5'>
                     <div className='flex gap-x-4'>
-                        <Link to={`user/${post.authorId}`}>
+                        <Link to={`user/${post.author}`}>
                             <img
                                 className='h-12 w-12 flex-none rounded-full bg-gray-50'
                                 src={
@@ -24,7 +24,7 @@ const PostPreview: React.FC<IPostPreviewProps> = (post) => {
                             />
                         </Link>
                         <div className='min-w-0 flex-auto'>
-                            <Link to={`user/${post.authorId}`}>
+                            <Link to={`user/${post.author}`}>
                                 <p className='text-sm font-semibold leading-6 text-gray-900'>
                                     Author: {post.author}
                                 </p>

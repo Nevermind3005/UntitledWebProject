@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { endpoints } from '../../api';
+import { useNavigate } from 'react-router';
 
 const SignUp = () => {
     const [signUpData, setSignUpData] = useState({
@@ -7,6 +8,8 @@ const SignUp = () => {
         password: '',
         email: '',
     });
+
+    const navigate = useNavigate();
 
     const signUp = async () => {
         let response;
@@ -23,6 +26,7 @@ const SignUp = () => {
         }
         if (response?.ok) {
             const data = await response.json();
+            navigate('/signin');
             console.log(data);
         }
     };

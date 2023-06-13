@@ -9,8 +9,16 @@ import {
     userDeleteHandler,
     userGetHandler,
     userGetMeHandler,
+    userGetPostsHandler,
 } from '../../handlers/userHandler';
 import { authenticate } from '../../services/authService';
+import { PostsGetDto, PostsGetDtoType } from '../../types/post';
+import {
+    UserGetDto,
+    UserGetDtoType,
+    UserGetMeDto,
+    UserGetMeDtoType,
+} from '../../types/user';
 
 module.exports = function (
     fastify: FastifyInstance<
@@ -23,8 +31,42 @@ module.exports = function (
     opts: any,
     done: () => void
 ) {
-    fastify.get('/user/:username', userGetHandler);
+    fastify.get<{ Reply: UserGetDtoType }>(
+        '/user/:username',
+        {
+            onRequest: [authenticate],
+            schema: {
+                response: {
+                    200: UserGetDto,
+                },
+            },
+        },
+        userGetHandler
+    );
     fastify.delete('/user/deactivate', userDeleteHandler);
-    fastify.get('/user/me', { onRequest: [authenticate] }, userGetMeHandler);
+    fastify.get<{ Reply: UserGetMeDtoType }>(
+        '/user/me',
+        {
+            onRequest: [authenticate],
+            schema: {
+                response: {
+                    200: UserGetMeDto,
+                },
+            },
+        },
+        userGetMeHandler
+    );
+    fastify.get<{ Reply: PostsGetDtoType }>(
+        '/user/:username/posts',
+        {
+            onRequest: [authenticate],
+            schema: {
+                response: {
+                    200: PostsGetDto,
+                },
+            },
+        },
+        userGetPostsHandler
+    );
     done();
 };

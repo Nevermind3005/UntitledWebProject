@@ -12,9 +12,25 @@ export const UserRegisterDto = Type.Object({
     email: Type.String({ format: 'email' }),
 });
 
-export const UserGetDto = Type.Object({
-    _id: Type.String(),
+export const UserGet = Type.Object({
+    _id: Type.String({ format: 'ObjectId' }),
     username: Type.String({ minLength: 3, maxLength: 20 }),
+    role: Type.String(),
+});
+
+export const UserGetDto = Type.Object({
+    data: UserGet,
+});
+
+export const UserGetMe = Type.Object({
+    _id: Type.String({ format: 'ObjectId' }),
+    username: Type.String({ minLength: 3, maxLength: 20 }),
+    email: Type.String({ format: 'email' }),
+    role: Type.String(),
+});
+
+export const UserGetMeDto = Type.Object({
+    data: UserGetMe,
 });
 
 export const UserDeactivateDto = Type.Object({
@@ -23,6 +39,7 @@ export const UserDeactivateDto = Type.Object({
 });
 
 export type UserGetDtoType = Static<typeof UserGetDto>;
+export type UserGetMeDtoType = Static<typeof UserGetMeDto>;
 export type UserLoginDtoType = Static<typeof UserLoginDto>;
 export type UserRegisterDtoType = Static<typeof UserRegisterDto>;
 

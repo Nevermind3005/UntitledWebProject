@@ -9,6 +9,7 @@ import SignUp from './Components/SignUp/SignUp';
 import Posts from './Components/Posts/Posts';
 import Post from './Components/Post/Post';
 import User from './Components/User/User';
+import { endpoints } from './api';
 
 const router = createBrowserRouter([
     {
@@ -18,14 +19,14 @@ const router = createBrowserRouter([
         children: [
             {
                 path: '/',
-                element: <Posts />,
+                element: <Posts url={endpoints.post.get} />,
             },
             {
                 path: '/post/:id',
                 element: <Post />,
             },
             {
-                path: '/user/:id',
+                path: '/user/:username',
                 element: <User />,
             },
         ],

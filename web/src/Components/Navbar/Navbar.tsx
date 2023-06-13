@@ -3,7 +3,7 @@ import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { User } from '../../Types/user';
 import { endpoints } from '../../api';
-import { useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 interface INavbarProps {
     user: User;
@@ -11,11 +11,11 @@ interface INavbarProps {
 
 const Navbar: React.FC<INavbarProps> = ({ user }) => {
     const navigation = [
-        { name: 'Dashboard', href: '#', current: true },
-        { name: 'Team', href: '#', current: false },
-        { name: 'Projects', href: '#', current: false },
-        { name: 'Calendar', href: '#', current: false },
+        { name: 'Dashboard', href: '/' },
+        { name: 'Create post', href: 'post' },
     ];
+
+    const location = useLocation();
 
     const navigate = useNavigate();
 
@@ -66,23 +66,25 @@ const Navbar: React.FC<INavbarProps> = ({ user }) => {
                                     <div className='hidden sm:ml-6 sm:block'>
                                         <div className='flex space-x-4'>
                                             {navigation.map((item) => (
-                                                <a
+                                                <Link
                                                     key={item.name}
-                                                    href={item.href}
+                                                    to={item.href}
                                                     className={classNames(
-                                                        item.current
+                                                        item.href ===
+                                                            location.pathname
                                                             ? 'bg-gray-900 text-white'
                                                             : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                                                         'rounded-md px-3 py-2 text-sm font-medium'
                                                     )}
                                                     aria-current={
-                                                        item.current
+                                                        item.href ===
+                                                        location.pathname
                                                             ? 'page'
                                                             : undefined
                                                     }
                                                 >
                                                     {item.name}
-                                                </a>
+                                                </Link>
                                             ))}
                                         </div>
                                     </div>
@@ -127,32 +129,30 @@ const Navbar: React.FC<INavbarProps> = ({ user }) => {
                                             <Menu.Items className='absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
                                                 <Menu.Item>
                                                     {({ active }) => (
-                                                        <a
-                                                            href='#'
+                                                        <p
                                                             className={classNames(
                                                                 active
                                                                     ? 'bg-gray-100'
                                                                     : '',
-                                                                'block px-4 py-2 text-sm text-gray-700'
+                                                                'block px-4 py-2 text-sm text-gray-700 cursor-pointer'
                                                             )}
                                                         >
                                                             Your Profile
-                                                        </a>
+                                                        </p>
                                                     )}
                                                 </Menu.Item>
                                                 <Menu.Item>
                                                     {({ active }) => (
-                                                        <a
-                                                            href=''
+                                                        <p
                                                             className={classNames(
                                                                 active
                                                                     ? 'bg-gray-100'
                                                                     : '',
-                                                                'block px-4 py-2 text-sm text-gray-700'
+                                                                'block px-4 py-2 text-sm text-gray-700 cursor-pointer'
                                                             )}
                                                         >
                                                             Settings
-                                                        </a>
+                                                        </p>
                                                     )}
                                                 </Menu.Item>
                                                 <Menu.Item>
@@ -165,7 +165,7 @@ const Navbar: React.FC<INavbarProps> = ({ user }) => {
                                                                 active
                                                                     ? 'bg-gray-100'
                                                                     : '',
-                                                                'block px-4 py-2 text-sm text-gray-700'
+                                                                'block px-4 py-2 text-sm text-gray-700 cursor-pointer'
                                                             )}
                                                         >
                                                             Sign out
@@ -187,13 +187,15 @@ const Navbar: React.FC<INavbarProps> = ({ user }) => {
                                         as='a'
                                         href={item.href}
                                         className={classNames(
-                                            item.current
+                                            item.href === location.pathname
                                                 ? 'bg-gray-900 text-white'
                                                 : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                                             'block rounded-md px-3 py-2 text-base font-medium'
                                         )}
                                         aria-current={
-                                            item.current ? 'page' : undefined
+                                            item.href === location.pathname
+                                                ? 'page'
+                                                : undefined
                                         }
                                     >
                                         {item.name}

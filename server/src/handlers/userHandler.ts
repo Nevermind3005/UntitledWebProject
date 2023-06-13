@@ -31,3 +31,20 @@ export const userGetMeHandler = async (request: any, reply: any) => {
     }
     reply.status(200).send({ data: post });
 };
+
+export const userGetPostsHandler = async (request: any, reply: any) => {
+    const { username } = request.params;
+    const limit = parseInt(request.query.limit) || 25;
+    const skip = parseInt(request.query.skip) || 0;
+
+    const posts = await request.server.mongo.db
+        .collection('Posts')
+        .find({ author: username })
+        .limit(limit)
+        .skip(skip)
+        .toArray();
+    if (!posts) {
+        return reply.status(404).send({ data: { error: 'Not Found' } });
+    }
+    return reply.status(200).send({ data: posts });
+};

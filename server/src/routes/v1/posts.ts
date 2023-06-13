@@ -22,6 +22,7 @@ module.exports = function (
     fastify.get<{ Reply: PostsGetDtoType }>(
         '/posts',
         {
+            onRequest: [authenticate],
             schema: {
                 response: {
                     200: PostsGetDto,
@@ -34,6 +35,7 @@ module.exports = function (
     fastify.get<{ Reply: PostGetDtoType }>(
         '/posts/:id',
         {
+            onRequest: [authenticate],
             schema: {
                 response: {
                     200: PostGetDto,
