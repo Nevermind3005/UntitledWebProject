@@ -8,6 +8,7 @@ import {
     PostGetDtoType,
     PostGetDto,
 } from '../../types/post';
+import { authenticate } from '../../services/authService';
 
 module.exports = function (
     fastify: FastifyInstance<
@@ -44,7 +45,9 @@ module.exports = function (
 
     fastify.post(
         '/posts',
+
         {
+            onRequest: [authenticate],
             schema: {
                 body: {
                     type: 'object',

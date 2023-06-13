@@ -22,5 +22,12 @@ export const userDeleteHandler = async (request: any, reply: any) => {
 };
 
 export const userGetMeHandler = async (request: any, reply: any) => {
-    return request.user;
+    const tokenUser = request.user;
+    const post = await request.server.mongo.db
+        .collection('Users')
+        .findOne({ username: tokenUser.username });
+    if (!post) {
+        return reply.status(404).send({ data: { error: 'Not Found' } });
+    }
+    reply.status(200).send({ data: post });
 };

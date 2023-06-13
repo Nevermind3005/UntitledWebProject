@@ -1,12 +1,15 @@
 import { useState } from 'react';
-import { token } from '../../token';
+import { setAccessToken } from '../../token';
 import { endpoints } from '../../api';
+import { useNavigate } from 'react-router';
 
 const SignIn = () => {
     const [loginData, setLoginData] = useState({
         username: '',
         password: '',
     });
+
+    const navigate = useNavigate();
 
     const login = async () => {
         let response;
@@ -16,6 +19,7 @@ const SignIn = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
                 body: JSON.stringify(loginData),
             });
         } catch (error) {
@@ -23,9 +27,9 @@ const SignIn = () => {
         }
         if (response?.ok) {
             const data = await response.json();
-            token.authToken = data.data.accessToken;
+            setAccessToken(data.data.accessToken);
             setLoginData({ username: '', password: '' });
-            console.log(token.authToken);
+            navigate('/');
         }
     };
 

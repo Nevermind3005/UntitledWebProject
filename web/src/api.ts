@@ -3,6 +3,17 @@ const endpoints = {
     auth: {
         login: `${baseUrl}/api/v1/auth/login`,
         register: `${baseUrl}/api/v1/auth/register`,
+        refreshToken: `${baseUrl}/api/v1/auth/refresh`,
+        logout: `${baseUrl}/api/v1/auth/logout`,
+    },
+    user: {
+        get: `${baseUrl}/api/v1/user`,
+        getMe: `${baseUrl}/api/v1/user/me`,
+    },
+    post: {
+        get: `${baseUrl}/api/v1/posts`,
+        getOne: `${baseUrl}/api/v1/posts/`,
+        post: `${baseUrl}/api/v1/posts`,
     },
 };
 

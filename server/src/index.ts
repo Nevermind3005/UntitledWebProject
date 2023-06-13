@@ -11,6 +11,11 @@ const server = fastify({
     logger: pino({ level: 'info' }),
 }).withTypeProvider<TypeBoxTypeProvider>();
 
+server.register(require('@fastify/cors'), {
+    origin: 'http://localhost:3000',
+    credentials: true,
+});
+
 server.register(require('@fastify/mongodb'), {
     forceClose: true,
     url: mongodbUrl,

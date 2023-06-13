@@ -24,9 +24,20 @@ export const postsGetHandler = async (request: any, reply: any) => {
 };
 
 export const postPostHandler = async (request: any, reply: any) => {
+    const tokenUser = request.user;
+    const user = await request.server.mongo.db
+        .collection('Users')
+        .findOne({ username: tokenUser.username });
+    if (!user) {
+        return reply.status(404).send({ data: { error: 'Not Found' } });
+    }
+    const newPost = request.body;
+    newPost.author = user.username;
+    newPost.authorId = user._id;
+    newPost.createdAt = new Date();
     const post = await request.server.mongo.db
         .collection('Posts')
-        .insertOne(request.body);
+        .insertOne(newPost);
     return { data: post };
 };
 

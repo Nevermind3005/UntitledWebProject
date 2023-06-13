@@ -4,6 +4,9 @@ export const PostGet = Type.Object({
     _id: Type.String({ format: 'ObjectId' }),
     title: Type.String({ minLength: 1, maxLength: 255 }),
     body: Type.String({ minLength: 1, maxLength: 1024 }),
+    author: Type.String({ minLength: 3, maxLength: 20 }),
+    authorId: Type.String({ format: 'ObjectId' }),
+    createdAt: Type.String({ format: 'date-time' }),
 });
 
 export const PostPostDto = Type.Object({
