@@ -41,4 +41,54 @@ export const postPostHandler = async (request: any, reply: any) => {
     return { data: post };
 };
 
-export const questionsDeleteHandler = async (request: any, reply: any) => {};
+export const postUpdateHandler = async (request: any, reply: any) => {
+    const tokenUser = request.user;
+    const user = await request.server.mongo.db
+        .collection('Users')
+        .findOne({ username: tokenUser.username });
+    if (!user) {
+        return reply.status(404).send({ data: { error: 'Not Found' } });
+    }
+    const { id } = request.params;
+    const post = await request.server.mongo.db
+        .collection('Posts')
+        .findOne({ _id: new ObjectId(id) });
+    if (!post) {
+        return reply.status(404).send({ data: { error: 'Not Found' } });
+    }
+    if (post.authorId.toString() !== user._id.toString()) {
+        return reply.status(403).send({ data: { error: 'Forbidden' } });
+    }
+    const updatedPost = request.body;
+
+    console.log(updatedPost);
+
+    await request.server.mongo.db
+        .collection('Posts')
+        .updateOne({ _id: new ObjectId(id) }, { $set: updatedPost });
+    return { data: { message: 'Post updated' } };
+};
+
+export const postDeleteHandler = async (request: any, reply: any) => {
+    const tokenUser = request.user;
+    const user = await request.server.mongo.db
+        .collection('Users')
+        .findOne({ username: tokenUser.username });
+    if (!user) {
+        return reply.status(404).send({ data: { error: 'Not Found' } });
+    }
+    const { id } = request.params;
+    const post = await request.server.mongo.db
+        .collection('Posts')
+        .findOne({ _id: new ObjectId(id) });
+    if (!post) {
+        return reply.status(404).send({ data: { error: 'Not Found' } });
+    }
+    if (post.authorId.toString() !== user._id.toString()) {
+        return reply.status(403).send({ data: { error: 'Forbidden' } });
+    }
+    await request.server.mongo.db
+        .collection('Posts')
+        .deleteOne({ _id: new ObjectId(id) });
+    return { data: { message: 'Post deleted' } };
+};

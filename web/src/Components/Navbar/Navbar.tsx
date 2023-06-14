@@ -12,7 +12,7 @@ interface INavbarProps {
 const Navbar: React.FC<INavbarProps> = ({ user }) => {
     const navigation = [
         { name: 'Dashboard', href: '/' },
-        { name: 'Create post', href: 'post' },
+        { name: 'Create post', href: '/submit' },
     ];
 
     const location = useLocation();
@@ -130,6 +130,11 @@ const Navbar: React.FC<INavbarProps> = ({ user }) => {
                                                 <Menu.Item>
                                                     {({ active }) => (
                                                         <p
+                                                            onClick={() =>
+                                                                navigate(
+                                                                    `/user/${user.username}`
+                                                                )
+                                                            }
                                                             className={classNames(
                                                                 active
                                                                     ? 'bg-gray-100'
@@ -144,6 +149,11 @@ const Navbar: React.FC<INavbarProps> = ({ user }) => {
                                                 <Menu.Item>
                                                     {({ active }) => (
                                                         <p
+                                                            onClick={() =>
+                                                                navigate(
+                                                                    '/settings'
+                                                                )
+                                                            }
                                                             className={classNames(
                                                                 active
                                                                     ? 'bg-gray-100'

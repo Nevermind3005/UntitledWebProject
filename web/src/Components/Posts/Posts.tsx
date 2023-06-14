@@ -5,6 +5,7 @@ import PostPreview from '../PostPreview/PostPreview';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { getAccessToken, refreshToken } from '../../token';
 import { useNavigate } from 'react-router';
+import { User } from '../../Types/user';
 
 interface IPostsProps {
     url: string;
@@ -13,8 +14,38 @@ interface IPostsProps {
 const Posts: React.FC<IPostsProps> = ({ url }) => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-
+    const [user, setUser] = useState<User>({
+        _id: '',
+        username: '',
+        email: '',
+        role: '',
+    });
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchUser = async (repeat: number) => {
+            fetch(`${endpoints.user.getMe}`, {
+                method: 'GET',
+                headers: { Authorization: getAccessToken() },
+                redirect: 'follow',
+            })
+                .then((res) => {
+                    if (!res.ok) {
+                        return Promise.reject(res);
+                    } else {
+                        repeat = 0;
+                        return res.json();
+                    }
+                })
+                .then((data) => {
+                    setUser(data.data);
+                })
+                .catch((err) => {
+                    console.log(err + 'error');
+                });
+        };
+        fetchUser(0);
+    }, []);
 
     useEffect(() => {
         const getPosts = async (repeat: number) => {
@@ -36,14 +67,14 @@ const Posts: React.FC<IPostsProps> = ({ url }) => {
                     setLoading(false);
                 })
                 .catch((err) => {
-                    if (repeat === 0) {
-                        refreshToken().then(() => {
-                            getPosts(1);
-                        });
-                    } else {
-                        navigate('/signin');
-                    }
-                    console.log(err + 'error');
+                    // if (repeat === 0) {
+                    //     refreshToken().then(() => {
+                    //         getPosts(1);
+                    //     });
+                    // } else {
+                    //     navigate('/signin');
+                    // }
+                    // console.log(err + 'error');
                 });
         };
         getPosts(0);
@@ -57,7 +88,13 @@ const Posts: React.FC<IPostsProps> = ({ url }) => {
                         <div>Loading</div>
                     ) : (
                         posts.map((post) => (
-                            <PostPreview key={post._id} {...post} />
+                            <PostPreview
+                                key={post._id}
+                                {...post}
+                                meId={user._id}
+                                posts={posts}
+                                setPosts={setPosts}
+                            />
                         ))
                     )}
                 </ul>

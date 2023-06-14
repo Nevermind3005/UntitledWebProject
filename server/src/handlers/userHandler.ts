@@ -11,14 +11,26 @@ export const userGetHandler = async (request: any, reply: any) => {
 
 //TODO edit
 export const userDeleteHandler = async (request: any, reply: any) => {
-    const { username } = request.params;
-    const post = await request.server.mongo.db
+    const { username } = request.user;
+
+    const user = await request.server.mongo.db
         .collection('Users')
-        .deleteOne({ username: username });
-    if (!post) {
+        .findOne({ username: username });
+
+    console.log(user);
+
+    if (!user) {
         return reply.status(404).send({ data: { error: 'Not Found' } });
     }
-    reply.status(200).send({ data: post });
+
+    await request.server.mongo.db
+        .collection('Posts')
+        .deleteMany({ author: username });
+    await request.server.mongo.db
+        .collection('Users')
+        .deleteOne({ username: username });
+
+    reply.status(200).send({ data: 'ok' });
 };
 
 export const userGetMeHandler = async (request: any, reply: any) => {

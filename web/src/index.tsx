@@ -10,6 +10,9 @@ import Posts from './Components/Posts/Posts';
 import Post from './Components/Post/Post';
 import User from './Components/User/User';
 import { endpoints } from './api';
+import Settings from './Components/Settings/Settings';
+import CreatePost from './Components/CreatePost/CreatePost';
+import UpdatePost from './Components/UpdatePost/UpdatePost';
 
 const router = createBrowserRouter([
     {
@@ -28,6 +31,18 @@ const router = createBrowserRouter([
             {
                 path: '/user/:username',
                 element: <User />,
+            },
+            {
+                path: '/settings',
+                element: <Settings />,
+            },
+            {
+                path: '/submit',
+                element: <CreatePost />,
+            },
+            {
+                path: 'update/:id',
+                element: <UpdatePost />,
             },
         ],
     },

@@ -1,6 +1,11 @@
 import { FastifyInstance } from 'fastify';
 import { Server, IncomingMessage, ServerResponse } from 'http';
-import { postsGetHandler, postPostHandler } from '../../handlers/postsHandler';
+import {
+    postsGetHandler,
+    postPostHandler,
+    postDeleteHandler,
+    postUpdateHandler,
+} from '../../handlers/postsHandler';
 import {
     PostPostDto,
     PostsGetDto,
@@ -58,6 +63,21 @@ module.exports = function (
             },
         },
         postPostHandler
+    );
+    fastify.delete(
+        '/posts/:id',
+        {
+            onRequest: [authenticate],
+        },
+        postDeleteHandler
+    );
+
+    fastify.put(
+        '/posts/:id',
+        {
+            onRequest: [authenticate],
+        },
+        postUpdateHandler
     );
 
     done();

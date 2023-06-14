@@ -38,6 +38,7 @@ export const login = async (request: any, reply: any) => {
             httpOnly: true,
             expires: refreshToken.expiresAt,
             signed: true,
+            sameSite: 'none',
         })
         .status(200)
         .send({ data: { accessToken: `Bearer ${token}` } });
@@ -115,6 +116,8 @@ export const refresh = async (request: any, reply: any) => {
         request.cookies.refreshToken
     );
 
+    console.log(cookieRefreshToken);
+
     //Get user from db
     const dbUser = await request.server.mongo.db.collection('Users').findOne({
         refreshTokens: {
@@ -157,6 +160,7 @@ export const refresh = async (request: any, reply: any) => {
             httpOnly: true,
             expires: refreshToken.expiresAt,
             signed: true,
+            sameSite: 'none',
         })
         .status(200)
         .send({ data: { accessToken: `Bearer ${token}` } });

@@ -9,11 +9,13 @@ const endpoints = {
     user: {
         get: `${baseUrl}/api/v1/user`,
         getMe: `${baseUrl}/api/v1/user/me`,
+        delete: `${baseUrl}/api/v1/user`,
     },
     post: {
         get: `${baseUrl}/api/v1/posts`,
         getOne: `${baseUrl}/api/v1/posts/`,
         post: `${baseUrl}/api/v1/posts`,
+        delete: `${baseUrl}/api/v1/posts/`,
     },
 };
 

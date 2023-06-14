@@ -43,7 +43,7 @@ module.exports = function (
         },
         userGetHandler
     );
-    fastify.delete('/user/deactivate', userDeleteHandler);
+    fastify.delete('/user', { onRequest: [authenticate] }, userDeleteHandler);
     fastify.get<{ Reply: UserGetMeDtoType }>(
         '/user/me',
         {
